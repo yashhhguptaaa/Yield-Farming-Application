@@ -1,3 +1,5 @@
+
+
 const Tether = artifacts.require('Tether');
 const RWD = artifacts.require('RWD');
 const DecentralBank = artifacts.require('DecentralBank');
@@ -50,6 +52,34 @@ contract('DecentralBank',([owner,customer]) => {
             let balance = await rwd.balanceOf(decentralBank.address)
             assert.equal(balance, tokens('1000000'))
         })
+
+    describe('Yield Farming', async () => {
+        it('rewards tokens for staking', async () => {
+            let result 
+
+            //Check Investor Balance
+            result = await tether.balanceOf(customer)
+            assert.equal(result.toString(), tokens('100'),'Customer Tether Wallet Balance before stalking')
+        
+
+            // Check Staking For Customer of 100 tokens
+            await tether.approve(decentralBank.address, tokens('100'), {from: customer})
+            await decentralBank.depositTokens(tokens('100'), {from : customer})
+
+            // check Updated Balance Of Customer
+            result = await tether.balanceOf(customer)
+            assert.equal(result.toString(), tokens('0'),'Customer Tether Wallet Balance After stalking')
+
+            // Check updated balance of Decentral Bank
+            result = await tether.balanceOf(decentralBank.address)
+            assert.equal(result, tokens('100'),'Decentral Bank Balance should be 100')
+
+            // Is Staking Balance
+            result = await decentralBank.isStaking(customer)
+            assert.equal(result.toString(), 'true', 'customer is staking status after staking')
+    })
+
+    })
     })
     
 })
