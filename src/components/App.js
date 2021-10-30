@@ -3,6 +3,8 @@ import './App.css';
 import Navbar from './Navbar';
 import Web3 from "web3";
 import Tether from '../truffle_abis/Tether.json';
+import RWD from '../truffle_abis/RWD.json';
+import DecentralBank from '../truffle_abis/DecentralBank.json';
 
 class App extends Component {
 
@@ -43,6 +45,34 @@ class App extends Component {
         else{
             window.alert('Error! Tether contract not deployed - no detected network!')
         }
+
+        // Load RWD contract
+        const rwdData = RWD.networks[networkId];
+        if(rwdData) {
+            const rwd = new web3.eth.Contract(RWD.abi,rwdData.address )
+            this.setState({rwd : rwd})
+            let rwdBalance = await rwd.methods.balanceOf(this.state.account).call()
+            this.setState({rwdBalance: rwdBalance.toString() })
+            console.log('rwd balance: ',rwdBalance/ Math.pow(10,18)+'eth');
+        }
+        else{
+            window.alert('Error! RWD contract not deployed - no detected network!')
+        }
+
+        // Load Decentral Bank contract
+        const decentralBankData = DecentralBank.networks[networkId];
+        if(decentralBankData) {
+            const decentralBank = new web3.eth.Contract(DecentralBank.abi,decentralBankData.address )
+            this.setState({decentralBank : decentralBank})
+            let stakingBalance = await decentralBank.methods.stakingBalance(this.state.account).call()
+            this.setState({stakingBalance: stakingBalance.toString() })
+            console.log('Staking balance: ',stakingBalance/ Math.pow(10,18)+'eth');
+        }
+        else{
+            window.alert('Error! Decentral Bank contract not deployed - no detected network!')
+        }
+
+        this.setState({loading : false})
     }
 
     constructor(props) {
@@ -65,8 +95,8 @@ class App extends Component {
         return (
             <div>
                 <Navbar account={this.state.account}/>
-                <div className="text-center">
-                    <h1>Hello, world!</h1>
+                <div className="text-center" style={{marginTop:'50px'}}>
+                    <h1>{this.state.loading}</h1>
                 </div>
             </div>
         )
