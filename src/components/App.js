@@ -5,6 +5,7 @@ import Web3 from "web3";
 import Tether from '../truffle_abis/Tether.json';
 import RWD from '../truffle_abis/RWD.json';
 import DecentralBank from '../truffle_abis/DecentralBank.json';
+import Main from './Main';
 
 class App extends Component {
 
@@ -81,7 +82,7 @@ class App extends Component {
             account:'0x0',
             tether:{},
             rwd : {},
-            decentralBank: {},
+            decentralBank: {}, 
             tetherBalance: '0',
             rwdBalance: '0',
             stakingBalance: '0',
@@ -92,11 +93,22 @@ class App extends Component {
    
 
     render() {
+        let content;
+        {this.state.loading ? 
+            content= <p id='loader' className='text-center' style={{margin:'30px'}}>LOADING...</p> 
+            : 
+            content=<Main />}
         return (
             <div>
                 <Navbar account={this.state.account}/>
-                <div className="text-center" style={{marginTop:'50px'}}>
-                    <h1>{this.state.loading}</h1>
+                <div className="container-fluid mt-5" >
+                    <div className='row'>
+                        <main role='main' className='col-lg-12 ml-auto mr-auto' style={{maxWidth: '600px', minHeight:'100vm'}}>
+                            <div>
+                                {content}
+                            </div> 
+                        </main>
+                    </div>
                 </div>
             </div>
         )
