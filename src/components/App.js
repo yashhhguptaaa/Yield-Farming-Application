@@ -76,6 +76,15 @@ class App extends Component {
         this.setState({loading : false})
     }
 
+    stakeTokens = (amount) => {
+        this.setState({loading: true})
+        this.state.tether.methods.approve(this.state.decentralBank._address, amount).send({from : this.state.account}).on('transactionHash',hash => {
+            this.state.decentralBank.methods.depositTokens(amount).send({from : this.state.account}).on('transactionHash',hash => {
+                this.setState({loading: false})
+            })
+        })
+    }
+
     constructor(props) {
         super(props)
         this.state = {
@@ -102,6 +111,7 @@ class App extends Component {
             tetherBalance={this.state.tetherBalance}
             rwdBalance={this.state.rwdBalance}
             stakingBalance={this.state.stakingBalance}
+            stakeTokens= {this.stakeTokens}
             />}
         return (
             <div>
